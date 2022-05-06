@@ -6,3 +6,9 @@
 # Build directory.
 build/
 out/
+
+# Test
+# ignore unix binary files
+test/*                  
+# unignore test files
+!test/*.cc
