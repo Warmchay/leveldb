@@ -22,15 +22,20 @@ namespace leveldb {
 // Grouping of constants.  We may want to make some of these
 // parameters set via options.
 namespace config {
+// 磁盘上最大 level 值为 7
 static const int kNumLevels = 7;
 
 // Level-0 compaction is started when we hit this many files.
+// level-0 的 SSTable 达到这个阈值时触发压缩，默认为 4KB
 static const int kL0_CompactionTrigger = 4;
 
 // Soft limit on number of level-0 files.  We slow down writes at this point.
+// Level-0 SSTable 到达这个阈值时，允许睡眠 1ms，将 CPU 尽可能的
+// 移交给压缩线程，默认值为 8 个文件
 static const int kL0_SlowdownWritesTrigger = 8;
 
 // Maximum number of level-0 files.  We stop writes at this point.
+// 压缩跟不上写 这里指的是文件
 static const int kL0_StopWritesTrigger = 12;
 
 // Maximum level to which a new compacted memtable is pushed if it
@@ -39,9 +44,11 @@ static const int kL0_StopWritesTrigger = 12;
 // expensive manifest file operations.  We do not push all the way to
 // the largest level since that can generate a lot of wasted disk
 // space if the same key space is being repeatedly overwritten.
+// 新压缩产生的 sstable 最多允许推动至几层(目标层不允许重叠)，默认为2，如 SST0->SST2
 static const int kMaxMemCompactLevel = 2;
 
 // Approximate gap in bytes between samples of data read during iteration.
+// 数据迭代过程中，检查是否满足压缩条件，该参数控制的是读取的最大字节数
 static const int kReadBytesPeriod = 1048576;
 
 }  // namespace config
