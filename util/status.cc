@@ -27,6 +27,7 @@ Status::Status(Code code, const Slice& msg, const Slice& msg2) {
   std::memcpy(result, &size, sizeof(size));
   result[4] = static_cast<char>(code);
   std::memcpy(result + 5, msg.data(), len1);
+  /* 返回 4-bit size + 1-bit code + msg + ": " + msg2  */
   if (len2) {
     result[5 + len1] = ':';
     result[6 + len1] = ' ';
