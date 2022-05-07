@@ -173,6 +173,8 @@ struct SkipList<Key, Comparator>::Node {
 
  private:
   // Array of length equal to the node height.  next_[0] is lowest level link.
+  // 1. 这里提前使用声明分配 1 个对象的内存，是因为第 0 层肯定有全部数据
+  // 2. 使用数组方式，则后续分配的内存就是连续的，cache-friendly
   std::atomic<Node*> next_[1];
 };
 
@@ -181,6 +183,7 @@ typename SkipList<Key, Comparator>::Node* SkipList<Key, Comparator>::NewNode(
     const Key& key, int height) {
   char* const node_memory = arena_->AllocateAligned(
       sizeof(Node) + sizeof(std::atomic<Node*>) * (height - 1));
+  // 定位 new 写法
   return new (node_memory) Node(key);
 }
 
