@@ -21,6 +21,7 @@ class LEVELDB_EXPORT Comparator {
  public:
   virtual ~Comparator();
 
+  // 支持三种操作：大于 / 等于 / 小于
   // Three-way comparison.  Returns value:
   //   < 0 iff "a" < "b",
   //   == 0 iff "a" == "b",
@@ -37,6 +38,7 @@ class LEVELDB_EXPORT Comparator {
   //
   // Names starting with "leveldb." are reserved and should not be used
   // by any clients of this package.
+  // 比较器名次，以 levelDB 开头
   virtual const char* Name() const = 0;
 
   // Advanced functions: these are used to reduce the space requirements

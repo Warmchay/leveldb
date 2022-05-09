@@ -53,6 +53,7 @@ static const int kReadBytesPeriod = 1048576;
 
 }  // namespace config
 
+// 内部 key，常用于和 key 比较等场景
 class InternalKey;
 
 // Value types encoded as the last component of internal keys.
@@ -69,15 +70,17 @@ static const ValueType kValueTypeForSeek = kTypeValue;
 
 typedef uint64_t SequenceNumber;
 
+// 递增的 uint64 整数，相同 key 按照其降序，最大值为:
 // We leave eight bits empty at the bottom so a type and sequence#
 // can be packed together into 64-bits.
 static const SequenceNumber kMaxSequenceNumber = ((0x1ull << 56) - 1);
 
 struct ParsedInternalKey {
+  // 用户输入的数据 key
   Slice user_key;
   SequenceNumber sequence;
   ValueType type;
-
+  // 对 InternalKey 的解析，因为 InternalKey 是一个字符串
   ParsedInternalKey() {}  // Intentionally left uninitialized (for speed)
   ParsedInternalKey(const Slice& u, const SequenceNumber& seq, ValueType t)
       : user_key(u), sequence(seq), type(t) {}
@@ -177,17 +180,22 @@ inline int InternalKeyComparator::Compare(const InternalKey& a,
 
 inline bool ParseInternalKey(const Slice& internal_key,
                              ParsedInternalKey* result) {
+  // 总字节数
   const size_t n = internal_key.size();
   if (n < 8) return false;
   uint64_t num = DecodeFixed64(internal_key.data() + n - 8);
+  // 反编码出后 8 个字节
+  // 进行位运算计算出 seq 和 type
   uint8_t c = num & 0xff;
   result->sequence = num >> 8;
   result->type = static_cast<ValueType>(c);
+  // 前 n-8 个字节用于表示具体用户
   result->user_key = Slice(internal_key.data(), n - 8);
   return (c <= static_cast<uint8_t>(kTypeValue));
 }
 
 // A helper class useful for DBImpl::Get()
+// 用于 DBImpl::Get() 中
 class LookupKey {
  public:
   // Initialize *this for looking up user_key at a snapshot with
@@ -199,7 +207,10 @@ class LookupKey {
 
   ~LookupKey();
 
+  // Lookup 内部各种 key 转换
+
   // Return a key suitable for lookup in a MemTable.
+  // 存储在 memTable 的 key，这个 key 是包含 value 的
   Slice memtable_key() const { return Slice(start_, end_ - start_); }
 
   // Return an internal key (suitable for passing to an internal iterator)
@@ -219,6 +230,9 @@ class LookupKey {
   const char* start_;
   const char* kstart_;
   const char* end_;
+  // 一个内存优化，类似于 string 的 sso 优化
+  // 当字符串较短时，直接将其数据存在栈中
+  // 而不去堆中动态申请空间，避免堆空间所需的开销
   char space_[200];  // Avoid allocation for short keys
 };
 

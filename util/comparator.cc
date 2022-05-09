@@ -33,11 +33,13 @@ class BytewiseComparatorImpl : public Comparator {
     // Find length of common prefix
     size_t min_length = std::min(start->size(), limit.size());
     size_t diff_index = 0;
+    // 去除公共的部分
     while ((diff_index < min_length) &&
            ((*start)[diff_index] == limit[diff_index])) {
       diff_index++;
     }
 
+    // TODO: 理解这个处理 为什么就找到了最短最近的字符串
     if (diff_index >= min_length) {
       // Do not shorten if one string is a prefix of the other
     } else {

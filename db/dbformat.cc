@@ -62,6 +62,10 @@ int InternalKeyComparator::Compare(const Slice& akey, const Slice& bkey) const {
   return r;
 }
 
+// 用于减少索引块等内部数据结构的空间需求
+// 如果 *start < limit, 则将 *start 更改为 [start, limit) 中的短字符串
+// 简单的比较器实现可能会以 *start 不变返回，即此方法的实现不执行任何操作也是正确的
+// 然后再调用 Compare 函数
 void InternalKeyComparator::FindShortestSeparator(std::string* start,
                                                   const Slice& limit) const {
   // Attempt to shorten the user portion of the key
@@ -81,6 +85,9 @@ void InternalKeyComparator::FindShortestSeparator(std::string* start,
   }
 }
 
+// 将 *key 更改为 string >= *key. 
+// Simple 比较器实现可能会在 *key 不变的情况下返回
+// TODO: 没太理解这个方法为什么是对的
 void InternalKeyComparator::FindShortSuccessor(std::string* key) const {
   Slice user_key = ExtractUserKey(*key);
   std::string tmp(user_key.data(), user_key.size());
