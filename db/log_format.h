@@ -23,7 +23,7 @@ enum RecordType {
   kLastType = 4
 };
 static const int kMaxRecordType = kLastType;
-
+// 一个内存块大小为 4k
 static const int kBlockSize = 32768;
 
 // Header is checksum (4 bytes), length (2 bytes), type (1 byte).

@@ -18,6 +18,8 @@ Arena::~Arena() {
 }
 
 char* Arena::AllocateFallback(size_t bytes) {
+  // 当 bytes 大于剩余字节数且大于 1/4 kBlockSize时
+  // 需要额外分配所需的字节数，搭配剩余字节一起使用
   if (bytes > kBlockSize / 4) {
     // Object is more than a quarter of our block size.  Allocate it separately
     // to avoid wasting too much space in leftover bytes.
@@ -25,6 +27,8 @@ char* Arena::AllocateFallback(size_t bytes) {
     return result;
   }
 
+  // 当大于剩余字节数，而小于 1/4 时，新分配一个块
+  // 将剩余字节位置更新至新分配的块，原先剩余的部分内存直接丢弃
   // We waste the remaining space in the current block.
   alloc_ptr_ = AllocateNewBlock(kBlockSize);
   alloc_bytes_remaining_ = kBlockSize;
@@ -39,6 +43,7 @@ char* Arena::AllocateAligned(size_t bytes) {
   const int align = (sizeof(void*) > 8) ? sizeof(void*) : 8;
   static_assert((align & (align - 1)) == 0,
                 "Pointer size should be a power of 2");
+  // 这里使用位运算代替取模用于计算当前字节是否对齐
   size_t current_mod = reinterpret_cast<uintptr_t>(alloc_ptr_) & (align - 1);
   size_t slop = (current_mod == 0 ? 0 : align - current_mod);
   size_t needed = bytes + slop;
