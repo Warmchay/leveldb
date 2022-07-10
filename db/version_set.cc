@@ -27,6 +27,7 @@ static size_t TargetFileSize(const Options* options) {
 
 // Maximum bytes of overlaps in grandparent (i.e., level+2) before we
 // stop building a single file in a level->level+1 compaction.
+// level-n 和 level-n+2 之间重叠的字节为 10*max_file_size
 static int64_t MaxGrandParentOverlapBytes(const Options* options) {
   return 10 * TargetFileSize(options);
 }
@@ -43,6 +44,7 @@ static double MaxBytesForLevel(const Options* options, int level) {
   // the level-0 compaction threshold based on number of files.
 
   // Result for both level-0 and level-1
+  // L0: 2M L1: 4M
   double result = 10. * 1048576.0;
   while (level > 1) {
     result *= 10;

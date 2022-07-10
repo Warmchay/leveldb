@@ -127,7 +127,7 @@ struct LEVELDB_EXPORT Options {
   // compactions and hence longer latency/performance hiccups.
   // Another reason to increase this parameter might be when you are
   // initially populating a large database.
-  // 生成新文件的阈值(默认为 2K)，对于性能较好的文件系统可以调大该阈值来增加数据恢复的时间
+  // 生成新文件的阈值(默认为 2M)，对于性能较好的文件系统可以调大该阈值来增加数据恢复的时间
   size_t max_file_size = 2 * 1024 * 1024;
 
   // Compress blocks using the specified compression algorithm.  This

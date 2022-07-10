@@ -26,11 +26,11 @@ namespace config {
 static const int kNumLevels = 7;
 
 // Level-0 compaction is started when we hit this many files.
-// level-0 的 SSTable 达到这个阈值时触发压缩，默认为 4KB
+// level-0 的 SSTable 个数达到 4 时默认进行压缩
 static const int kL0_CompactionTrigger = 4;
 
 // Soft limit on number of level-0 files.  We slow down writes at this point.
-// Level-0 SSTable 到达这个阈值时，允许睡眠 1ms，将 CPU 尽可能的
+// Level-0 SSTable 数量达 8 时，允许睡眠 1ms，将 CPU 尽可能的
 // 移交给压缩线程，默认值为 8 个文件
 static const int kL0_SlowdownWritesTrigger = 8;
 
