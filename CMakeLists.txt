@@ -390,6 +390,7 @@ if(LEVELDB_BUILD_TESTS)
   leveldb_test("db/c_test.c")
 
   if(NOT BUILD_SHARED_LIBS)
+    leveldb_test("test/main.cc")
     # TODO(costan): This test also uses
     #               "util/env_{posix|windows}_test_helper.h"
     if (WIN32)
